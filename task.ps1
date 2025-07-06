@@ -6,7 +6,7 @@ $subnetName = "default"
 $vnetAddressPrefix = "10.0.0.0/16"
 $subnetAddressPrefix = "10.0.0.0/24"
 $sshKeyName = "linuxboxsshkey"
-$sshKeyPublicKey = Get-Content "~/.ssh/ id_ed25519.pub"
+$sshKeyPublicKey = Get-Content "~/.ssh/id_ed25519.pub"
 $publicIpAddressName = "linuxboxpip"
 $vmName = "matebox"
 $vmImage = "Ubuntu2204"
@@ -29,7 +29,7 @@ Write-Host "Creating a SSH key ..."
 New-AzSshKey -Name $sshKeyName -ResourceGroupName $resourceGroupName -PublicKey $sshKeyPublicKey
 
 Write-Host "Creating a Public IP Address ..."
-New-AzPublicIpAddress -Name $publicIpAddressName -ResourceGroupName $resourceGroupName -Location $location -Sku Basic -AllocationMethod Dynamic -DomainNameLabel $dnsLabel
+New-AzPublicIpAddress -Name $publicIpAddressName -ResourceGroupName $resourceGroupName -Location $location -Sku Standard -AllocationMethod Static -DomainNameLabel $dnsLabel
 
 Write-Host "Creating a VM ..."
 # Update the VM deployment command to enable a system-assigned mannaged identity on it. 
@@ -42,7 +42,7 @@ New-AzVm `
 -SubnetName $subnetName `
 -VirtualNetworkName $virtualNetworkName `
 -SecurityGroupName $networkSecurityGroupName `
--AssignIdentity `
+-SystemAssignedIdentity `
 -SshKeyName $sshKeyName  -PublicIpAddressName $publicIpAddressName
 
 Write-Host "Installing the TODO web app..."
@@ -53,7 +53,7 @@ $Params = @{
     Publisher          = 'Microsoft.Azure.Extensions'
     ExtensionType      = 'CustomScript'
     TypeHandlerVersion = '2.1'
-    Settings          = @{fileUris = @('https://raw.githubusercontent.com/Alex13-th/develop/azure_task_13_vm_monitoring/main/install-app.sh'); commandToExecute = './install-app.sh'}
+    Settings          = @{fileUris = @('https://raw.githubusercontent.com/Alex-13th/azure_task_13_vm_monitoring/develop/install-app.sh'); commandToExecute = './install-app.sh'}
 }
 Set-AzVMExtension @Params
 
